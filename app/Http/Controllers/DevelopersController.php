@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 
 use App\User;
 use App\Model\Topic;
+use App\Model\Task;
 use App\Model\Topicuser;
+use App\Model\Taskuser;
 
 use Illuminate\Support\Facades\DB;
 
@@ -18,12 +20,19 @@ class DevelopersController extends Controller
         return view('registerDeveloper');
     }
     public function doregister(){
-        $this->validate(request(),[
-            'name' => 'Required',
-            'email' => 'Required|email',
-            'password' => 'Required|min:4'
-        ]);
-        
+        // $this->validate(request(),[
+        //     'name' => 'Required',
+        //     'email' => 'Required|email',
+        //     'password' => 'Required|min:4'
+        // ]);
+        $email = request()->input('email');
+      if (empty($email)) {
+          return redirect()->route('registerDeveloper')->withErrors(['email' => 'Email field is required.']);
+      }
+    $password = request()->input('password');
+      if (empty($password)) {
+          return redirect()->route('registerDeveloper')->withErrors(['password' => 'Password field is required.']);
+      }
         
         $user=User::create(request()->all());
         
@@ -32,7 +41,7 @@ class DevelopersController extends Controller
             return redirect()->route('loginDeveloper')->with('registerSuccess',true);
         }
         else{
-            return redirect()->back()->with('registerError',true);
+            return redirect()->route('registerDeveloper')->withErrors(['password' => 'Password field is required.']);
         }
 
          
@@ -43,26 +52,41 @@ class DevelopersController extends Controller
     }
     public function dologin(){
 
-        $this->validate(request(),[
-            'email' => 'Required|email',
-            'password' => 'Required|min:4'
-        ]);
+        // $this->validate(request(),[
+        //     'email' => 'Required|email',
+        //     'password' => 'Required|min:4'
+        // ]);
+        $email = request()->input('email');
+        if (empty($email)) {
+            return redirect()->route('loginDeveloper')->withErrors(['email' => 'Email field is required.']);
+        }
+       $password = request()->input('password');
+        if (empty($password)) {
+            return redirect()->route('loginDeveloper')->withErrors(['password' => 'Password field is required.']);
+        }
 
-        if(Auth::attempt(['email'=>request()->input('email'),'password'=>request()->input('password') ]))
+        if(Auth::attempt(['email'=>request()->input('email'),'password'=>request()->input('password') ]) && Auth::user()->role === "D")
         {
-            return redirect()->route('developerDashboard');
+
+            if(Auth::user()->active === '0'){
+                return redirect()->route('profileDeveloper');
+            }
+            else{
+                return redirect()->route('developerDashboard');
+            }
         }
-        else{
-            return redirect()->back()->with('loginError',true);
-        }
+             else{
+                return redirect()->route('loginDeveloper')->withErrors(['wrong' => 'Username and Password  is wrong.']);
+            }
     }
 
     public function dashboard(){
-        //  $topicUser=Topicuser::where('user_id',Auth::user()->id)->get();
-        //  dd($topic_id);
+     
+        $topics=Topic::all();
          $userId=Auth::user();
-         $topicUser=$userId->topics;
-         return view('developers.dashboard',compact('topicUser'));
+         $taskUser=$userId->tasks;
+         $topicUsers=$userId->topics;
+         return view('developers.dashboard',compact('taskUser','topics','topicUsers'));
     }
     public function logout(){
         Auth::logout();
@@ -73,12 +97,17 @@ class DevelopersController extends Controller
     }
     public function profileUpdate(){
         
-        
+          $this->validate(request(),[
+            'phone' => 'Required|min:10',
+            'name' => 'Required' , 
+
+        ]);
+        // echo request()->input('profile');
         $user=User::find(Auth::user()->id);
         $user->update(request()->all());
         if($user instanceof User)
         {
-            return redirect()->route('profileDeveloper')->with('Changes Successfully',true);
+            return redirect()->route('developerDashboard')->with('Changes Successfully',true);
         }
     }
 
@@ -89,36 +118,35 @@ class DevelopersController extends Controller
     public function action(){
         echo "dffddffddf";
     }
+    // public function challange($id){
+    //    $challange=Topic::find($id); 
+    //    return view('developers.challange',compact('challange'));
+    // }
     public function challange($id){
        $challange=Topic::find($id); 
        return view('developers.challange',compact('challange'));
     }
     public function dochallange($topic_id){
-        $this->validate(request(),[
-         'option1'=>'required',
-         'option2'=>'required',
-         'option3'=>'required',
-        ]);
-        $bb=0;
-        if( request()->input('option1') == 'option3-1' ){
-           $bb+=1;
-        };
-        if(request()->input('option2') == 'option4-2'){
-          $bb+=1; 
-        };
-        if(request()->input('option3') == 'option1-3'){
-          $bb+=1; 
-        };
-            //  $score=($bb/3)*100;
-                 $user_id=Auth::user()->id;
-                 $topic=Topic::find($topic_id);
-                $topic->users()->attach($user_id);
-            //  $topicUser=Topicuser::create(['topic_id'=>$topic_id , 'user_id' => $user_id , 'score' => $score]);
-            //  if($topicUser instanceof Topicuser){
-                   return redirect()->route('developerDashboard');
-            //  }
-            //  else{
-            //      return redirect()->back();
-            //  }
+        // echo $topic_id;
+        $html=request()->input('html');
+        $css=request()->input('css');
+        $javascript=request()->input('javascript');
+        $task=Task::create(['topic_id'=>$topic_id , 'html' => $html , 'css' => $css  , 'javascript' => $javascript]);
+        if($task instanceof Task){
+            $user = Auth::user();
+            $topic = Topic::findOrFail($topic_id);
+            // Attach the user to the task
+            $topic->users()->attach($user->id);
+            // $task->users()->attach($user->id);
+
+    
+            // Redirect to dashboard
+            return redirect()->route('developerDashboard');
+        }
+        else{
+            // If task creation failed, redirect back with error message
+            return redirect()->back()->withErrors(['task' => 'Unable to create task.']);
+        }
     }
+    
 }

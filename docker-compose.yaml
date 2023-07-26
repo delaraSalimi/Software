@@ -1,0 +1,53 @@
+version: '3'
+services:
+  main:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: 'php artisan serve --host=0.0.0.0'
+    volumes:
+      - .:/app
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=docker
+      - DB_USERNAME=docker
+      - DB_PASSWORD=docker
+  
+  db: 
+    image: mysql:latest
+    environment:
+      - MYSQL_DATABASE=php_docker
+      - MYSQL_USER=php_docker
+      - MYSQL_PASSWORD=password # this should live in a env var
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1 # equivalent to True
+    ports:
+      - "6033:3306"
+    volumes:
+      - "./db:/docker-entrypoint-initdb.d" # this is how we persist a sql db even when container stops
+    
+  www:
+    image: php:apache
+    volumes:
+      - "./:/var/www/html" # sync the current dir on local machine to the dir of container
+    ports:
+      - 80:80
+      - 443:443 # for future ssl traffic
+    depends_on:
+      - main
+      - db
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8001:80
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+    depends_on:
+      - db

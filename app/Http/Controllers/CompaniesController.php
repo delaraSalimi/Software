@@ -16,11 +16,18 @@ class CompaniesController extends Controller
       return view('registerCompany');
     }
     function doregister(){
-      $this->validate(request(),[
-        'name' => 'Required',
-        'email' => 'Required|email',
-        'password' => 'Required|min:4'
-    ]);
+    //   $this->validate(request(),[
+    //     'email' => 'Required|email',
+    //     'password' => 'Required|min:4'
+    // ]);
+    $email = request()->input('email');
+      if (empty($email)) {
+          return redirect()->route('registerCompany')->withErrors(['email' => 'Email field is required.']);
+      }
+    $password = request()->input('password');
+      if (empty($password)) {
+          return redirect()->route('registerCompany')->withErrors(['password' => 'Password field is required.']);
+      }
     $user=User::create(request()->all());
           
       if($user instanceof User )
@@ -28,7 +35,7 @@ class CompaniesController extends Controller
           return redirect()->route('loginCompany')->with('registerSuccess',true);
       }
       else{
-          return redirect()->back()->with('registerError',true);
+          return redirect()->route('registerCompany');
       }
 
 
@@ -37,16 +44,24 @@ class CompaniesController extends Controller
     return view('loginCompany');
     }
     function dologin(){
-      $this->validate(request(),[
-        'email' => 'Required|email',
-        ]);
+      //  $this->validate(request(),[
+      //   'email' => 'Required|email',
+      //   ]);
+      $email = request()->input('email');
+      if (empty($email)) {
+          return redirect()->route('loginCompany')->withErrors(['email' => 'Email field is required.']);
+      }
+     $password = request()->input('password');
+      if (empty($password)) {
+          return redirect()->route('loginCompany')->withErrors(['password' => 'Password field is required.']);
+      }
 
         if(Auth::attempt(['email'=>request()->input('email'),'password'=>request()->input('password') ]))
         {
             return redirect()->route('companyDashboard');
         }
         else{
-            return redirect()->back()->with('loginError',true);
+            return redirect()->route('loginCompany')->withErrors(['wrong' => 'Username and Password  is wrong.']);
         }
     }
     function dashboard(){

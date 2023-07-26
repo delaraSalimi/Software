@@ -5,7 +5,7 @@ use App\User;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Topic extends Model
+class Task extends Model
 {
 
        
@@ -16,7 +16,7 @@ class Topic extends Model
          * @var array
          */
         protected $fillable = [
-           'title' ,'category' , 'skill','difficulty',
+           'html' ,'css' , 'javascript','topic_id'
 
         ];
     
@@ -29,10 +29,11 @@ class Topic extends Model
           
         ];
 
+        public function topics(){
+            return $this->belongsTo('App\Models\Topic');     
+        }       
         public function users(){
-          return $this->belongsToMany(User::class,'topic_user','topic_id','user_id');
-        }
-    
-        
+            return $this->belongsToMany(User::class,'task_user','task_id','user_id');
+          } 
     }
        

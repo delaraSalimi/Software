@@ -13,11 +13,11 @@
     <title>Developer Dashboard</title>
     <style>
            .top-header{
-            height: 60px;
-            background: #39424e;
+            height: 65px;
+            background: #0e141e;
            }
            .top-header .container a >img{
-               width:60px;
+               width:90px;
                float:left;
            }
            .top-header .container a > .logo{
@@ -27,13 +27,19 @@
             font-size: 24px;
            }
            .top-header .dropdown {
-            float: right;
-            margin-top: 10px;
-            cursor: pointer;
-            color: #c8dfe2;
-            border: solid #727272 2px;
-            padding: 7px 12px;
-            position:relative;
+            float:left;
+           }
+           .top-header .dropdown i{
+            margin-left: 25px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background-color: #e7eeef;
+            text-align: center;
+            padding-top: 10px;
+            margin-top: 13px;
+            font-size: 19px;
+            color:Black;
            }
            .top-header .dropdown .title{
             font-size: 15px;
@@ -52,9 +58,9 @@
             position: absolute;
             background: white;
             color: black;
-            width: 120%;
+            width: 350%;
             top: 127%;
-            right: 0;
+            right: -75px;
             box-shadow: 0 6px 10px 0 rgba(0,0,0,.2);
             display: none;
             padding: 0px 15px;
@@ -62,6 +68,14 @@
             border: solid #ccc 1px;
             z-index:5;
            }
+           .dropdown ul li{
+             padding:9px 0px  !important;
+             width:100%;
+           }
+           .dropdown ul {
+              margin:0 !important;
+           }
+
            .hackos{
             display: block;
             text-align: center;
@@ -76,11 +90,15 @@
            .dropdown-body ul li{
            
            }
+           .dropdown-body ul li i{
+             margin:0 !important;
+             background:none !important;
+           }
            .dropdown-body ul li a{
             color: #424242;
             border-bottom: solid #a0a0a0 1px;
-            padding: 7px 0;
-            margin: 12px 0;
+            pad ding: 7px 0;
+            ma rgin: 12px 0;
             font-size: 16px;
             display: block;
            }
@@ -89,19 +107,79 @@
             margin-right: 7px;
             color: #565656;
            }
+           .top-header ul{
+            color: #b7c9cc;
+            marg in-left: 50px;
+            float: left;
+           }
+           .top-header ul li{
+            float: left;
+            padding: 25px 20px 12px;
+            cursor: pointer;
+           }
+           .top-header ul li:hover{
+            color:White;
+           }
+           .searchContainer{
+            floaT: left;
+            margin-left: 25%;
+            margin-top: 15px;
+            background: #39424e;
+            border: 1px solid #576871;
+            border-radius: 5px;
+            width:20%;
+           }
+           .searchContainer input{
+            height: 32px;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 14px;
+            background: transparent;
+            border: 0;
+            outline:none;
+           }
+           .searchContainer i{
+            color: white;
+            margin: 9px;
+           }
+           .icons{
+            float: left;
+            margin-left: 30px;
+            margin-top: 20px;
+           }
+           .icons i{
+            color: #b7c9cc;
+                font-size: 20px;
+                padding: 5px 12px;
+                cursor: pointer;
+           }
     </style>
 </head>
 <body style="background:#f3f7f7">
     <div class="top-header">
         <div class="container">
-            <a href="{{route('index')}}"><img src="/files/images/logoWhite.png" alt=""><span class='logo'>HackerRank</span></a>
+            <a href="{{route('index')}}"><img src="/files/images/loog.png" alt=""></a>
+            <ul>
+                <li style="border-bottom:solid #2ec866 4px;margin-left:50px;">Prepare</li>
+                <li>Certify</li>
+                <li>Compete</li>
+            </ul>
+            <div class="searchContainer">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search">
+            </div>
+            <div class="icons">
+                <i class="far fa-comment-alt"></i>
+                <i class="far fa-bell" style="border-right: solid #b7c9cc 1px;padding-right: 20px;"></i>
+            </div>
+            <i style="color: #b7c9cc;cursor:pointer;float: left;margin: 24px 30px;font-size: 21px;" class="fas fa-th"></i>
             <div class="dropdown">
                 <i class="far fa-user"></i>
-                <span class='title'>{{ Illuminate\Support\Facades\Auth::user()->name }}</span>
-                <i class="fas fa-sort-down"></i>
+                <!-- <span class='title'>{{ Illuminate\Support\Facades\Auth::user()->name }}</span> -->
+                <!-- <i class="fas fa-sort-down"></i> -->
 
                 <div class="dropdown-body">
-                    <span class="hackos">HackoS:101</span>
+                    <!-- <span class="hackos">HackoS:101</span> -->
                     <ul>
                         @if(Illuminate\Support\Facades\Auth::user()->role == 'D' )
                             <li><a href="{{ route('developerDashboard') }}"><i class="fas fa-clipboard-list"></i>Dashboard</a></li>

@@ -22,12 +22,24 @@ Route::get('register', function () {
     return view('register');
 })->name('register');
 
+Route::get('requestDemo', function () {
+    return view('requestDemo');
+})->name('requestDemo');
+
+Route::get('GetStarted', function () {
+    return view('GetStarted');
+})->name('GetStarted');
+
+Route::get('accessAccount', function () {
+    return view('accessAccount');
+})->name('accessAccount');
+
 
 Route::group(['prefix'=>'developers'],function(){
     Route::get('register','DevelopersController@register')->name('registerDeveloper');
     Route::post('register','DevelopersController@doregister')->name('doregisterDeveloper');
     Route::get('login','DevelopersController@login')->name('loginDeveloper');
-    Route::post('login','DevelopersController@dologin');
+    Route::post('login','DevelopersController@dologin')->name('dologinDeveloper');
 
     Route::get('dashboard','DevelopersController@dashboard')->name('developerDashboard')->middleware('auth');
     Route::get('logout','DevelopersController@logout')->name('logoutDeveloper')->middleware('auth');
@@ -36,13 +48,14 @@ Route::group(['prefix'=>'developers'],function(){
 
     Route::get('topics/{category}','DevelopersController@topic')->name('topic')->middleware('auth');
     Route::get('challange/{id}','DevelopersController@challange')->name('challange')->middleware('auth');
-    Route::post('challange/{id}','DevelopersController@dochallange')->middleware('auth');
+    Route::post('challange/{id}','DevelopersController@dochallange')->name('dochallange')->middleware('auth');
     Route::get('action','DevelopersController@action')->name('action')->middleware('auth');
 
 });
 Route::group(['prefix' => 'companies'],function(){
     Route::get('register','CompaniesController@register')->name('registerCompany');
     Route::post('register','CompaniesController@doregister')->name('doregisterCompany');
+    // Route::post('register-company', 'CompaniesController@doRegisterCompany')->name('doRegisterCompany');
     Route::get('login','CompaniesController@login')->name('loginCompany');
     Route::post('login','CompaniesController@dologin')->name('dologinCompany');
     Route::get('dashboard','CompaniesController@dashboard')->name('companyDashboard')->middleware('auth');
